@@ -18,6 +18,7 @@ import (
 	"notepad/fnos"
 	"notepad/handler"
 	"notepad/logger"
+	"notepad/model"
 	"notepad/router"
 )
 
@@ -40,6 +41,11 @@ func StartServer(port int, dataDir, webDir, uploadDir, shareDirs string, fnOSApp
 	}
 
 	auth.Init(cfg.JWTSecret)
+
+	if _, err := model.ResolveDefaultUser(); err != nil {
+		logger.Error("Failed to resolve default user: %v", err)
+		return
+	}
 
 	uploadPath := cfg.UploadDir
 	if uploadPath == "" {

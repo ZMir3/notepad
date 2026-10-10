@@ -8,6 +8,7 @@ import (
 	"notepad/auth"
 	"notepad/fnos"
 	"notepad/logger"
+	"notepad/model"
 )
 
 func RequireAuth() gin.HandlerFunc {
@@ -21,10 +22,8 @@ func RequireAuth() gin.HandlerFunc {
 				c.Next()
 				return
 			} else {
-				logger.Error("Auth failed: invalid token from %s, err: %v", c.ClientIP(), err)
-				c.JSON(http.StatusUnauthorized, gin.H{"error": "登录已过期"})
-				c.Abort()
-				return
+				// 单用户免登录模式：忽略失效令牌，回退到默认账号
+				logger.Info("Ignoring invalid token from %s, fallback to default user: %v", c.ClientIP(), err)
 			}
 		}
 
@@ -45,11 +44,17 @@ func RequireAuth() gin.HandlerFunc {
 			}
 		}
 
-		// 单用户模式：无 token 时自动使用默认管理员账号
-		c.Set("userID", int64(1))
-		c.Set("username", "admin")
-		c.Set("role", "admin")
-		c.Next()
+		// 单用户模式：无有效登录态时使用启动时解析好的默认账号
+		if user, ok := model.DefaultUser(); ok {
+			c.Set("userID", user.ID)
+			c.Set("username", user.Username)
+			c.Set("role", user.Role)
+			c.Next()
+			return
+		}
+
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "未登录"})
+		c.Abort()
 	}
 }
 

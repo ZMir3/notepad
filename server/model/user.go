@@ -1,6 +1,8 @@
 package model
 
 import (
+	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"strings"
 	"time"
@@ -212,4 +214,48 @@ func GetAdminUser() (*User, error) {
 		return nil, err
 	}
 	return user, nil
+}
+
+// defaultUser 单用户免登录模式下使用的默认账号，启动时由 ResolveDefaultUser 注入。
+var defaultUser *User
+
+// DefaultUser 返回免登录模式下的默认账号。
+func DefaultUser() (*User, bool) {
+	if defaultUser == nil {
+		return nil, false
+	}
+	return defaultUser, true
+}
+
+// ResolveDefaultUser 解析一个可用于免登录访问的账号：优先管理员，其次任意已有
+// 账号；若数据库中一个用户都没有，则创建一个默认管理员。用于单用户免登录模式。
+func ResolveDefaultUser() (*User, error) {
+	user := &User{}
+	err := database.DB.QueryRow(
+		"SELECT id, username, role, created_at FROM users WHERE role = 'admin' ORDER BY id LIMIT 1",
+	).Scan(&user.ID, &user.Username, &user.Role, &user.CreatedAt)
+	if err == nil {
+		defaultUser = user
+		return user, nil
+	}
+
+	err = database.DB.QueryRow(
+		"SELECT id, username, role, created_at FROM users ORDER BY id LIMIT 1",
+	).Scan(&user.ID, &user.Username, &user.Role, &user.CreatedAt)
+	if err == nil {
+		defaultUser = user
+		return user, nil
+	}
+
+	// 没有任何用户：创建一个默认管理员，密码随机（本模式下无需登录）
+	buf := make([]byte, 16)
+	if _, rerr := rand.Read(buf); rerr != nil {
+		return nil, rerr
+	}
+	created, cerr := CreateUser("admin", hex.EncodeToString(buf), "", "", "admin")
+	if cerr != nil {
+		return nil, cerr
+	}
+	defaultUser = created
+	return created, nil
 }
