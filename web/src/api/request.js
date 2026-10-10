@@ -21,14 +21,6 @@ api.interceptors.request.use(config => {
 api.interceptors.response.use(
   res => res,
   err => {
-    if (err.response?.status === 401) {
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
-      const loginPath = `${import.meta.env.BASE_URL}login`
-      if (window.location.pathname !== loginPath) {
-        window.location.href = loginPath
-      }
-    }
     return Promise.reject(err)
   }
 )

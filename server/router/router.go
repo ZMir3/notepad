@@ -50,8 +50,6 @@ func Setup(uploadDir string, webDir string, fnOSConfig fnos.Config) *gin.Engine 
 		// Authenticated
 		auth := api.Group("", middleware.RequireAuth())
 		auth.POST("/auth/logout", handler.Logout)
-		// 赞赏支持计数（匿名设备统计，仅设备级信息，不含用户数据）
-		auth.POST("/donate/support", handler.DonateSupport)
 		auth.POST("/auth/change-password", handler.ChangePassword)
 		auth.PUT("/auth/security-question", handler.UpdateSecurityQuestion)
 		auth.POST("/upload", handler.Upload)

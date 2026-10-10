@@ -45,8 +45,11 @@ func RequireAuth() gin.HandlerFunc {
 			}
 		}
 
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "未登录"})
-		c.Abort()
+		// 单用户模式：无 token 时自动使用默认管理员账号
+		c.Set("userID", int64(1))
+		c.Set("username", "admin")
+		c.Set("role", "admin")
+		c.Next()
 	}
 }
 

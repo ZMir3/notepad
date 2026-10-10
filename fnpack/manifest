@@ -3,29 +3,17 @@ version               = 1.4.0
 display_name          = 记事本
 platform              = x86
 source                = thirdparty
-maintainer            = 科技智趣坊
+maintainer            = admin
 maintainer_url        = https://github.com/TechFunWay/notepad
-distributor           = 科技智趣坊
+distributor           = admin
 distributor_url       = http://techfunway.wycto.cn
 desktop_uidir         = ui
 desktop_applaunchname = techfunway-notepad.Application
-desc                  = 一款轻量、精美的多用户记事本应用，支持富文本编辑、标签分类管理、暗色模式、数据隔离，适合家庭或团队私有化部署
+desc                  = 一款轻量、精美的单用户记事本应用，支持富文本编辑、标签分类管理、暗色模式，适合家庭或个人私有化部署
 changelog             = """
-1.4.0 图标焕新、赞赏支持与飞牛网关登录修复
-【新增】
-- 赞赏支持功能：应用内新增「支持作者」入口与微信收款码弹窗，已支持后本版本内不再提示
-
-【优化】
-- 应用图标重新设计为琥珀暖色玻璃立体风格，与应用主题统一
-- 图标边缘多轮打磨，清除圆角黑描边与灰边残留，四角恢复纯净透明
-- 修复手机端首页底部出现横向滚动条的问题，长标题卡片正常省略号截断
-
-【修复】
-- 修复飞牛 NAS 安装包打开后登录成功但「加载笔记失败」的问题
-- 修复手机端点击右上角头像直接跳转个人设置的问题：改为弹出账号菜单，可选择个人设置或退出登录
-- 直连端口（局域网直连、Docker、直接运行）仍走应用自己的登录凭证，行为不变
-
-【兼容】
-- 已绑定飞牛账号的用户升级后从桌面入口打开即进入已登录状态
-- 未绑定飞牛账号的老用户请点击登录页的「飞牛 NAS 登录」完成一次绑定
+1.4.0 单用户免登录精简版
+【变更】
+- 去掉登录/注册/找回密码，打开即用，默认单用户
+- 去掉赞赏支持相关入口与弹窗
+- 开发者与发布者改为 admin
 """
